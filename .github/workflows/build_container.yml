@@ -13,6 +13,10 @@ on:
       container_file:
         required: true
         type: string
+      build_target:
+        required: false
+        type: string
+        default: base
     secrets:
       PODMAN_TOKEN:
         required: true
@@ -44,6 +48,7 @@ jobs:
           
           cd ${{ inputs.container_path }}
           podman build \
+            --target ${{ inputs.build_target }} \
             -f ${{ inputs.container_file }} \
             -t ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:v${GITHUB_SHA} .
           podman push ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:v${GITHUB_SHA}
