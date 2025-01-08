@@ -17,6 +17,10 @@ on:
         required: false
         type: string
         default: base
+      container_tag:
+        required: false
+        type: string
+        default: ${GITHUB_SHA}
     secrets:
       PODMAN_TOKEN:
         required: true
@@ -50,12 +54,12 @@ jobs:
           podman build \
             --target ${{ inputs.build_target }} \
             -f ${{ inputs.container_file }} \
-            -t ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:v${GITHUB_SHA} .
-          podman push ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:v${GITHUB_SHA}
+            -t ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }} .
+          podman push ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ intputs.container_tag }}
 
           # Publish latest stable build as latest tag
           if [[ "${GITHUB_REF}" == "refs/heads/${{ env.DEFAULT_BRANCH }}" ]]; then
-            podman tag ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:v${GITHUB_SHA} \
+            podman tag ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ intputs.container_tag }} \
                        ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:latest
             podman push ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:latest
           fi
