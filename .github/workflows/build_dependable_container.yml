@@ -53,7 +53,8 @@ jobs:
           podman build \
             --target ${{ inputs.build_target }} \
             -f ${{ inputs.container_file }} \
-            -t ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }} .
+            -t ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }}
+            --build-arg=DEV_CONTAINER_SHA=${{ inputs.container_tag }} .
           podman push ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }}
 
           # Publish latest stable build as latest tag
