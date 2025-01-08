@@ -48,7 +48,7 @@ jobs:
       # Build and push the container
       - name: Build and push container
         run: |
-          echo "Building container: ${{ inputs.container_name }}"
+          echo "Building container: ${{ inputs.container_name }}:${{ inputs.container_tag }}"
           
           cd ${{ inputs.container_path }}
           podman build \
