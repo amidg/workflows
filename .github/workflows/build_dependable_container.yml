@@ -16,6 +16,9 @@ on:
       container_tag:
         required: true
         type: string
+      parent_container_tag:
+        required: true
+        type: string
       build_target:
         required: false
         type: string
@@ -54,7 +57,7 @@ jobs:
             --target ${{ inputs.build_target }} \
             -f ${{ inputs.container_file }} \
             -t ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }} \
-            --build-arg=DEV_CONTAINER_SHA=${{ inputs.container_tag }} .
+            --build-arg=DEV_CONTAINER_SHA=${{ inputs.parent_container_tag }} .
           podman push ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }}
 
           # Publish latest stable build as latest tag
