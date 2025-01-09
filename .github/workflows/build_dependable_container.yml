@@ -16,7 +16,7 @@ on:
       container_tag:
         required: true
         type: string
-      parent_container_tag:
+      commit_sha:
         required: true
         type: string
       build_target:
@@ -50,20 +50,27 @@ jobs:
       # Build and push the container
       - name: Build and push container
         run: |
-          echo "Building container: ${{ inputs.container_name }}:${{ inputs.container_tag }}"
+          echo "Building container: ${{ inputs.container_name }}:${{ inputs.commit_sha }}"
           
           cd ${{ inputs.container_path }}
           podman build \
             --target ${{ inputs.build_target }} \
             -f ${{ inputs.container_file }} \
-            -t ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }} \
-            --build-arg=DEV_CONTAINER_SHA=${{ inputs.parent_container_tag }} .
-          podman push ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }}
+            -t ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.commit_sha }} \
+            --build-arg=DEV_CONTAINER_SHA=${{ inputs.commit_sha }} .
+          podman push ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.commit_sha }}
 
           # Publish latest stable build as latest tag
           if [[ "${GITHUB_REF}" == "refs/heads/${{ env.DEFAULT_BRANCH }}" ]]; then
-            podman tag ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }} \
+            # retag as latest
+            podman tag ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.commit_sha }} \
                        ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:latest
+
+            # retag as desired container tag:
+            podman tag ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.commit_sha }} \
+                       ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }}
+
+            # push
             podman push ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:latest
           fi
 
