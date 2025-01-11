@@ -23,6 +23,13 @@ on:
         required: false
         type: string
         default: base
+      download_artifact:
+        required: false
+        type: boolean
+        default: false
+      artifact_name:
+        required: false
+        type: string
     secrets:
       PODMAN_TOKEN:
         required: true
@@ -47,6 +54,14 @@ jobs:
       - name: Checkout latest code
         uses: actions/checkout@v3
 
+      # Download artifacts
+      - name: Download artifact
+        if: inputs.download_artifact == true
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: ./${{ inputs.container_path }}
+
       # Build and push the container
       - name: Build and push container
         run: |
@@ -60,17 +75,19 @@ jobs:
             --build-arg=DEV_CONTAINER_SHA=${{ inputs.commit_sha }} .
           podman push ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.commit_sha }}
 
-          # Publish latest stable build as latest tag
-          if [[ "${GITHUB_REF}" == "refs/heads/${{ env.DEFAULT_BRANCH }}" ]]; then
-            # retag as latest
-            podman tag ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.commit_sha }} \
-                       ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:latest
+      # Push container as stable
+      - name: Push container to stable
+        if: github.ref == env.DEFAULT_BRANCH
+        run: |
+          # retag as latest
+          podman tag ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.commit_sha }} \
+                     ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:latest
 
-            # retag as desired container tag:
-            podman tag ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.commit_sha }} \
-                       ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }}
+          # retag as desired container tag:
+          podman tag ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.commit_sha }} \
+                     ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }}
 
-            # push
-            podman push ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:latest
-          fi
+          # push
+          podman push ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:latest
+          podman push ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }}
 
