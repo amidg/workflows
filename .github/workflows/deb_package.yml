@@ -1,0 +1,47 @@
+name: Reusable Build and Push Workflow
+
+# List of required fields for github workflow
+on:
+  workflow_call:
+    inputs:
+      name:
+        required: true
+        type: string
+      scripts_path:
+        required: true
+        type: string
+
+jobs:
+  build_deb_package:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repository to get the files
+      - name: Checkout latest code
+        uses: actions/checkout@v3
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          cd ${{ inputs.build_script_path }}
+          bash ./1-deps.sh
+
+      - name: Build source code
+        run: |
+          # source environment variables used in building process
+          cd ${{ inputs.build_script_path }}
+          source ./2-env.sh
+
+          # run build script
+          bash ./3-build.sh
+
+      - name: Package Debian
+        run: |
+          cd ${{ inputs.build_script_path }}
+          bash ./4-deb.sh
+
+      # upload artefact
+      - name: Upload .deb file as an artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ inputs.name }}
+          path: output/example.deb
