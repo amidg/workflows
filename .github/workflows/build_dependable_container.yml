@@ -31,13 +31,16 @@ on:
       artifact_name:
         required: false
         type: string
+      default_branch:
+        required: false
+        type: string
+        default: refs/heads/main
     secrets:
       PODMAN_TOKEN:
         required: true
 
 env:
   REGISTRY_URL: ghcr.io/${{ github.repository_owner }}
-  DEFAULT_BRANCH: main
 
 jobs:
   build_and_push:
@@ -78,7 +81,7 @@ jobs:
 
       # Push container as stable
       - name: Push container to stable
-        if: github.ref == env.DEFAULT_BRANCH
+        if: github.ref == inputs.default_branch
         run: |
           # retag as latest
           podman tag ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.commit_sha }} \
