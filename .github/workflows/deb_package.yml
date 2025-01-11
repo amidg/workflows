@@ -23,7 +23,8 @@ jobs:
       - name: Install dependencies
         run: |
           cd ${{ inputs.scripts_path }}
-          bash ./1-deps.sh
+          chmod +x *.sh
+          sudo ./1-deps.sh
 
       - name: Build source code
         run: |
