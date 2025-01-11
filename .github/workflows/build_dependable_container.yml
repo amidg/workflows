@@ -13,12 +13,13 @@ on:
       container_file:
         required: true
         type: string
-      container_tag:
-        required: true
-        type: string
       commit_sha:
         required: true
         type: string
+      container_tag:
+        required: false
+        type: string
+        default: latest
       build_target:
         required: false
         type: string
