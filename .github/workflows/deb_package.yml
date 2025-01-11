@@ -22,13 +22,13 @@ jobs:
       # Install dependencies
       - name: Install dependencies
         run: |
-          cd ${{ inputs.build_script_path }}
+          cd ${{ inputs.scripts_path }}
           bash ./1-deps.sh
 
       - name: Build source code
         run: |
           # source environment variables used in building process
-          cd ${{ inputs.build_script_path }}
+          cd ${{ inputs.scripts_path }}
           source ./2-env.sh
 
           # run build script
@@ -36,7 +36,7 @@ jobs:
 
       - name: Package Debian
         run: |
-          cd ${{ inputs.build_script_path }}
+          cd ${{ inputs.scripts_path }}
           bash ./4-deb.sh
 
       # upload artefact
