@@ -42,7 +42,7 @@ jobs:
 
       # upload artefact
       - name: Upload .deb file as an artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.name }}
           path: ${{ inputs.scripts_path }}/*${{ inputs.name }}*.deb
