@@ -64,6 +64,12 @@ jobs:
           fi
           echo "tags=$TAGS" >> $GITHUB_OUTPUT
 
+      # Set architecture
+      - name: Set Architecture
+        id: set-arch
+        run: |
+          echo "arch=$(dpkg --print-architecture)" >> $GITHUB_OUTPUT
+
       # Use pre-defined docker build and push
       - name: Build and Push Container
         id: build-and-push
@@ -72,6 +78,6 @@ jobs:
           context: ${{ inputs.container_path }}
           file: ${{ inputs.container_file }}
           target: ${{ inputs.build_target }}
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/${{ steps.set-arch.outputs.arch }}
           push: true
           tags: ${{ steps.set-tags.outputs.tags }}
