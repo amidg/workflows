@@ -26,7 +26,7 @@ on:
         type: string
         default: base
     secrets:
-      PODMAN_TOKEN:
+      CONTAINER_TOKEN:
         required: true
 
 env:
@@ -42,7 +42,7 @@ jobs:
         uses: redhat-actions/podman-login@v1
         with:
           username: ${{ github.actor }}
-          password: ${{ secrets.PODMAN_TOKEN }}
+          password: ${{ secrets.CONTAINER_TOKEN }}
           registry: ${{ env.REGISTRY_URL }}
 
       # Checkout the repository to get the files

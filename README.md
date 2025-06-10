@@ -1,7 +1,7 @@
 # workflows
 My CI/CD tooling
 
-Copy `main.yml.example` from this repo to your `.github/workflows` and change `main.yml` to represent your containers. For example list of containers:
+Copy `.github/workflows/main.yml` from this repo to your `.github/workflows` and change `main.yml` to represent your containers. For example list of containers:
 ```
 strategy:
       matrix:
