@@ -9,7 +9,7 @@ on:
 
 jobs:
   # build test container with docker (amd64)
-  build_test_container_with_docker_amd64:
+  test_docker_amd64:
     uses: amidg/workflows/.github/workflows/build-docker-and-push.yml@main
     strategy:
       matrix:
@@ -27,7 +27,7 @@ jobs:
       CONTAINER_TOKEN: ${{ secrets.CONTAINER_TOKEN }}
 
   # build test container with docker (arm64)
-  build_test_container_with_docker_arm64:
+  test_docker_arm64:
     uses: amidg/workflows/.github/workflows/build-docker-and-push.yml@main
     strategy:
       matrix:
