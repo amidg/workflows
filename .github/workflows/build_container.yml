@@ -4,6 +4,11 @@ name: Reusable Build and Push Workflow
 on:
   workflow_call:
     inputs:
+      # ubuntu-24.04 or ubuntu-24.04-arm
+      runner:
+        required: false
+        type: string
+        default: ubuntu-24.04
       container_name:
         required: true
         type: string
@@ -30,7 +35,7 @@ env:
 
 jobs:
   build_and_push:
-    runs-on: ubuntu-latest
+    runs-on: ${ARCH} 
     steps:
       # Setup Podman to use container registry
       - name: Login Podman
@@ -42,11 +47,15 @@ jobs:
 
       # Checkout the repository to get the files
       - name: Checkout latest code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Build and push the container
       - name: Build and push container
         run: |
+          # print architecture
+          export ARCH=$(dpkg --print-architecture)
+
+          # build container
           echo "Building container: ${{ inputs.container_name }}:${{ inputs.container_tag }}"
           
           cd ${{ inputs.container_path }}
@@ -54,7 +63,7 @@ jobs:
             --target ${{ inputs.build_target }} \
             -f ${{ inputs.container_file }} \
             -t ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }} .
-          podman push ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }}
+          podman push ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}-${ARCH}:${{ inputs.container_tag }}
 
           # Publish latest stable build as latest tag
           if [[ "${GITHUB_REF}" == "refs/heads/${{ env.DEFAULT_BRANCH }}" ]]; then
