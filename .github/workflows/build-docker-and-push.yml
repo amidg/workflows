@@ -55,7 +55,7 @@ jobs:
 
       # Use pre-defined docker build and push
       - name: Build and Push Container
-        id: build-and-push
+        #id: build-and-push
         uses: docker/build-push-action@v6
         with:
           context: ${{ inputs.container_path }}
