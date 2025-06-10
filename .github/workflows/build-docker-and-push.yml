@@ -53,6 +53,17 @@ jobs:
       - name: Checkout latest code
         uses: actions/checkout@v4
 
+      # Set correct tags for the container
+      # GitHub actions do not support nested expressions
+      - name: Set Tags
+        id: set-tags
+        run: |
+          TAGS="${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }}"
+          if [[ "${GITHUB_REF}" == "refs/heads/${{ env.DEFAULT_BRANCH }}" ]]; then
+            TAGS="$TAGS,${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:latest"
+          fi
+          echo "tags=$TAGS" >> $GITHUB_OUTPUT
+
       # Use pre-defined docker build and push
       - name: Build and Push Container
         id: build-and-push
@@ -63,6 +74,4 @@ jobs:
           target: ${{ inputs.build_target }}
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: |
-            ${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }}
-            ${GITHUB_REF == 'refs/heads/${{ env.DEFAULT_BRANCH }}' && "${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:latest" || ""}
+          tags: ${{ steps.set-tags.outputs.tags }}
