@@ -71,17 +71,17 @@ jobs:
         run: |
           TAGS="${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }}"
           if [[ "${GITHUB_REF}" == "refs/heads/${{ env.DEFAULT_BRANCH }}" ]]; then
-            TAGS="$TAGS,${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:latest"
+            TAGS="${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:latest"
           fi
           echo "tags=$TAGS" >> $GITHUB_OUTPUT
 
       - name: Create and push manifest list
         run: |
-          # ensure experimental CLI is on—or use buildx CLI
+          # create manifest
           docker manifest create \
-            ${REGISTRY_URL}/${{ inputs.container_name }}:${{ inputs.container_tag }} \
+            ${{ steps.set-tags.outputs.tags }} \
             ${REGISTRY_URL}/${{ inputs.container_name }}:${{ inputs.container_tag }}-amd64 \
             ${REGISTRY_URL}/${{ inputs.container_name }}:${{ inputs.container_tag }}-arm64
 
-          docker manifest push \
-            ${REGISTRY_URL}/${{ inputs.container_name }}:${{ steps.set-tags.outputs.tags }}
+          # push manifest
+          docker manifest push ${{ steps.set-tags.outputs.tags }}
