@@ -12,16 +12,14 @@ on:
       container_name:
         required: true
         type: string
-      container_path:
-        required: true
-        type: string
       container_file:
         required: false
         type: string
         default: Containerfile
       container_tag:
-        required: true
+        required: false
         type: string
+        default: latest
       build_target:
         required: false
         type: string

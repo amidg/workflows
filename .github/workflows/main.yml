@@ -19,8 +19,7 @@ jobs:
             file: Containerfile
     with:
       container_name: ${{ matrix.container.name }}
-      container_path: ${{ matrix.container.path }}
-      container_file: ${{ matrix.container.file }}
+      container_file: ${{ matrix.container.path }}/${{ matrix.container.file }}
       container_tag:  ${{ github.sha }}
       runner: ubuntu-24.04
     secrets:
@@ -37,8 +36,7 @@ jobs:
             file: Containerfile
     with:
       container_name: ${{ matrix.container.name }}
-      container_path: ${{ matrix.container.path }}
-      container_file: ${{ matrix.container.file }}
+      container_file: ${{ matrix.container.path }}/${{ matrix.container.file }}
       container_tag:  ${{ github.sha }}
       runner: ubuntu-24.04-arm
     secrets:
