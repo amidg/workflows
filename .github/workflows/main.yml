@@ -8,9 +8,9 @@ on:
       - 'v*.*.*'
 
 jobs:
-  # build test container with docker (amd64)
-  test_docker_amd64:
-    uses: amidg/workflows/.github/workflows/build-docker-and-push.yml@main
+  # build test manifest
+  test_docker_multiarch:
+    uses: amidg/workflows/.github/workflows/build_docker_multiarch.yml@main
     strategy:
       matrix:
         container:
@@ -21,23 +21,5 @@ jobs:
       container_name: ${{ matrix.container.name }}
       container_file: ${{ matrix.container.path }}/${{ matrix.container.file }}
       container_tag:  ${{ github.sha }}
-      runner: ubuntu-24.04
-    secrets:
-      CONTAINER_TOKEN: ${{ secrets.CONTAINER_TOKEN }}
-
-  # build test container with docker (arm64)
-  test_docker_arm64:
-    uses: amidg/workflows/.github/workflows/build-docker-and-push.yml@main
-    strategy:
-      matrix:
-        container:
-          - name: workflow-docker-test
-            path: .
-            file: Containerfile
-    with:
-      container_name: ${{ matrix.container.name }}
-      container_file: ${{ matrix.container.path }}/${{ matrix.container.file }}
-      container_tag:  ${{ github.sha }}
-      runner: ubuntu-24.04-arm
     secrets:
       CONTAINER_TOKEN: ${{ secrets.CONTAINER_TOKEN }}
