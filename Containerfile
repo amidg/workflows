@@ -1,4 +1,5 @@
-FROM ubuntu:24.04 AS base
+ARG UBUNTU_VERSION=22.04
+FROM ubuntu:$UBUNTU_VERSION AS base
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update -qqy && \

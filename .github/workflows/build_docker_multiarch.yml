@@ -19,6 +19,14 @@ on:
         required: false
         type: string
         default: base
+      build_args:
+        description: |
+          Multiline list of build‑args, e.g.
+          FOO=bar
+          BAZ=baz
+        required: false
+        type: string
+        default: ""
     secrets:
       CONTAINER_TOKEN:
         required: true
@@ -36,6 +44,7 @@ jobs:
       container_file: ${{ inputs.container_file }}
       container_tag:  ${{ github.sha }}-amd64
       runner: ubuntu-24.04
+      build_args: ${{ inputs.build_args }}
     secrets:
       CONTAINER_TOKEN: ${{ secrets.CONTAINER_TOKEN }}
 
@@ -47,6 +56,7 @@ jobs:
       container_file: ${{ inputs.container_file }}
       container_tag:  ${{ github.sha }}-arm64
       runner: ubuntu-24.04-arm
+      build_args: ${{ inputs.build_args }}
     secrets:
       CONTAINER_TOKEN: ${{ secrets.CONTAINER_TOKEN }}
 

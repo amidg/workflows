@@ -21,5 +21,7 @@ jobs:
       container_name: ${{ matrix.container.name }}
       container_file: ${{ matrix.container.path }}/${{ matrix.container.file }}
       container_tag:  ${{ github.sha }}
+      build_args: |
+        UBUNTU_VERSION=24.04
     secrets:
       CONTAINER_TOKEN: ${{ secrets.CONTAINER_TOKEN }}

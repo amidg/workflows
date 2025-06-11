@@ -24,6 +24,14 @@ on:
         required: false
         type: string
         default: base
+      build_args:
+        description: |
+          Multiline list of build‑args, e.g.
+          FOO=bar
+          BAZ=baz
+        required: false
+        type: string
+        default: ""
     secrets:
       CONTAINER_TOKEN:
         required: true
@@ -79,3 +87,4 @@ jobs:
           platforms: linux/${{ steps.set-arch.outputs.arch }}
           push: true
           tags: ${{ steps.set-tags.outputs.tags }}
+          build-args:  ${{ inputs.build_args }}
