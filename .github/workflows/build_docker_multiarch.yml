@@ -44,6 +44,7 @@ jobs:
       container_file: ${{ inputs.container_file }}
       container_tag:  ${{ github.sha }}-amd64
       runner: ubuntu-24.04
+      build_target: ${{ inputs.build_target }}
       build_args: ${{ inputs.build_args }}
     secrets:
       CONTAINER_TOKEN: ${{ secrets.CONTAINER_TOKEN }}
@@ -56,6 +57,7 @@ jobs:
       container_file: ${{ inputs.container_file }}
       container_tag:  ${{ github.sha }}-arm64
       runner: ubuntu-24.04-arm
+      build_target: ${{ inputs.build_target }}
       build_args: ${{ inputs.build_args }}
     secrets:
       CONTAINER_TOKEN: ${{ secrets.CONTAINER_TOKEN }}
