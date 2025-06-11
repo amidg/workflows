@@ -64,6 +64,17 @@ jobs:
           password: ${{ secrets.CONTAINER_TOKEN }}
           registry: ${{ env.REGISTRY_URL }}
 
+      # Set correct tags for the container
+      # GitHub actions do not support nested expressions
+      - name: Set Tags
+        id: set-tags
+        run: |
+          TAGS="${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:${{ inputs.container_tag }}"
+          if [[ "${GITHUB_REF}" == "refs/heads/${{ env.DEFAULT_BRANCH }}" ]]; then
+            TAGS="$TAGS,${{ env.REGISTRY_URL }}/${{ inputs.container_name }}:latest"
+          fi
+          echo "tags=$TAGS" >> $GITHUB_OUTPUT
+
       - name: Create and push manifest list
         run: |
           # ensure experimental CLI is on—or use buildx CLI
@@ -73,4 +84,4 @@ jobs:
             ${REGISTRY_URL}/${{ inputs.container_name }}:${{ inputs.container_tag }}-arm64
 
           docker manifest push \
-            ${REGISTRY_URL}/${{ inputs.container_name }}:${{ inputs.container_tag }}
+            ${REGISTRY_URL}/${{ inputs.container_name }}:${{ steps.set-tags.outputs.tags }}
